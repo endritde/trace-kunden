@@ -37,9 +37,10 @@ SZENARIEN = [
 ]
 
 
-def quartalswert(umsatz_12m: pd.Series) -> pd.Series:
-    """Durchschnittlicher Umsatz je Quartal aus den letzten 12 Monaten."""
-    return umsatz_12m / 4
+def quartalswert(verkaeufe: pd.DataFrame, kunden: pd.Index, stichtag: pd.Timestamp) -> pd.Series:
+    """Durchschnittlicher Umsatz je Quartal in den 12 Monaten vor dem Stichtag (nur Daten davor)."""
+    v = verkaeufe[(verkaeufe["datum"] < stichtag) & (verkaeufe["datum"] >= stichtag - pd.Timedelta(days=365))]
+    return (v.groupby("kunde")["umsatz"].sum() / 4).reindex(kunden, fill_value=0.0).rename("wert_quartal")
 
 
 def kampagnenwert(auswahl: np.ndarray, churn: np.ndarray, wert_quartal: np.ndarray, a: Annahmen) -> dict:
@@ -62,7 +63,7 @@ def kampagnenwert(auswahl: np.ndarray, churn: np.ndarray, wert_quartal: np.ndarr
 
 def top_anteil(score: np.ndarray, anteil: float) -> np.ndarray:
     """Maske der ``anteil`` Kunden mit dem höchsten Score."""
-    n = int(round(anteil * len(score)))
+    n = round(anteil * len(score))
     maske = np.zeros(len(score), dtype=bool)
     maske[np.argsort(-np.asarray(score), kind="stable")[:n]] = True
     return maske

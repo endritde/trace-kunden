@@ -8,8 +8,14 @@ from sklearn.base import ClassifierMixin
 from sklearn.ensemble import HistGradientBoostingClassifier, RandomForestClassifier
 from sklearn.inspection import permutation_importance
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import (average_precision_score, confusion_matrix, f1_score, precision_score,
-                             recall_score, roc_auc_score)
+from sklearn.metrics import (
+    average_precision_score,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+    roc_auc_score,
+)
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
 from sklearn.pipeline import Pipeline, make_pipeline
 from sklearn.preprocessing import FunctionTransformer, StandardScaler
@@ -68,7 +74,7 @@ class Bewertung:
 def bewerten(y: pd.Series, score: np.ndarray, schwelle: float = 0.5) -> Bewertung:
     """ROC-AUC, PR-AUC, Precision/Recall/F1 an der Schwelle und Precision in den 20 % riskantesten Kunden."""
     vorhersage = (score >= schwelle).astype(int)
-    top = np.argsort(-score)[: int(round(0.2 * len(score)))]
+    top = np.argsort(-score)[: round(0.2 * len(score))]
     return Bewertung(
         roc_auc=roc_auc_score(y, score),
         pr_auc=average_precision_score(y, score),

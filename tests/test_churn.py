@@ -1,7 +1,13 @@
 import pandas as pd
 import pytest
 
-from trace_kunden.churn import FEATURES, churn_datensatz, churn_label, kundenfeatures, population
+from trace_kunden.churn import (
+    FEATURES,
+    churn_datensatz,
+    churn_label,
+    kundenfeatures,
+    population,
+)
 
 STICHTAG = pd.Timestamp("2011-06-01")
 

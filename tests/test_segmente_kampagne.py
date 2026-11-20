@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from trace_kunden.kampagne import Annahmen, kampagnenwert, top_anteil
+from trace_kunden.kampagne import Annahmen, kampagnenwert, quartalswert, top_anteil
 from trace_kunden.modelle import bewerten
 from trace_kunden.segmente import rfm_matrix, rfm_scores, rfm_tabelle, segmente_benennen
 
@@ -59,3 +59,8 @@ def test_bewertung_perfektes_modell():
     b = bewerten(y, np.array([0.1, 0.2, 0.8, 0.9, 0.7]))
     assert b.roc_auc == 1 and b.precision == 1 and b.recall == 1
     assert b.konfusion.tolist() == [[2, 0], [0, 3]]
+
+
+def test_quartalswert_nur_letzte_12_monate_vor_stichtag(verkaeufe):
+    w = quartalswert(verkaeufe, pd.Index([1, 2, 3]), pd.Timestamp("2011-06-01"))
+    assert w.tolist() == [220 / 4, 30 / 4, 0.0]  # Kunde 3: Kauf 2010-03 zu alt, 2011-07 zu spät

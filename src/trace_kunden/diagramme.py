@@ -3,7 +3,6 @@
 from pathlib import Path
 
 import matplotlib as mpl
-import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.figure import Figure
 
