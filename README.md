@@ -1,15 +1,30 @@
 # Trace Kunden – Customer Analytics & Churn-Prognose
 
-> **English summary.** Customer analytics for a UK online wholesaler of gift items, based on the public
-> *Online Retail II* dataset (UCI, 1.07 M invoice lines, Dec 2009 – Dec 2011). Every cleaning step is justified and
-> counted (770 k sales lines from 5,839 identified customers remain). RFM analysis and K-Means (k = 4, chosen by
-> elbow + silhouette on log-scaled values) yield four segments; the top 20 % of customers generate 73 % of revenue.
-> Churn (no purchase in the next 90 days) is predicted with a leakage-free cut-off design and an **out-of-time
-> test**: trained at 10 Jun 2011, tested at 9 Sep 2011. Logistic regression, random forest and gradient boosting all
-> reach ROC-AUC ≈ 0.77 (recency rule of thumb: 0.71); in the 20 % riskiest customers 76 % actually churn (base rate
-> 49.5 %). The business part shows that a broad win-back campaign does **not** pay off under conservative
-> assumptions. Ranking by *risk × customer value* lowers the break-even success rate from 44 % (risk only) to 10 %;
-> the optimum is a small campaign for ~260 customers.
+## Auf einen Blick
+
+- **Problem:** Welche Kunden eines Online-Großhändlers wandern in den nächsten 90 Tagen ab, und wen lohnt es sich
+  zurückzugewinnen?
+- **Ergebnis:** Von den 20 % Kunden, die mein Modell als am gefährdetsten einstuft, wanderten 76 % tatsächlich ab.
+  Die Faustregel „lange nichts gekauft“ trifft 71 %, eine zufällige Auswahl 49,5 %.
+- **Empfehlung:** Keine breite Rabattaktion, denn sie rechnet sich unter vorsichtigen Annahmen nicht. Stattdessen
+  nur die rund 258 Kunden mit dem höchsten erwarteten Verlust (Risiko × Kundenwert) gezielt ansprechen und den
+  Effekt mit einer Testgruppe messen.
+
+> **English summary.**
+> Customer analytics for a UK online wholesaler of gift items, based on the public *Online Retail II* dataset
+> (UCI, 1.07 M invoice lines, Dec 2009 – Dec 2011).
+>
+> - **Cleaning:** every step is justified and counted; 770 k sales lines from 5,839 identified customers remain.
+> - **Segments:** RFM analysis and K-Means (k = 4, elbow + silhouette on log-scaled values) yield four segments;
+>   the top 20 % of customers generate 73 % of revenue.
+> - **Churn** (no purchase in the next 90 days): leakage-free cut-off design with an **out-of-time test**
+>   (trained at 10 Jun 2011, tested at 9 Sep 2011). Logistic regression, random forest and gradient boosting all
+>   reach ROC-AUC ≈ 0.77 (recency rule of thumb: 0.71). Among the 20 % riskiest customers, 76 % actually churn
+>   (base rate 49.5 %).
+> - **Business:** a broad win-back campaign does **not** pay off under conservative assumptions. Ranking by
+>   *risk × customer value* lowers the break-even success rate from 44 % (risk only) to 10 %; the optimum is a
+>   small campaign for ~260 customers.
+>
 > Stack: Python 3.12, pandas, scikit-learn, matplotlib, Jupyter, pytest.
 
 ![Demo: Durchlauf durch das Notebook](docs/demo.gif)
@@ -31,7 +46,7 @@ verträge, Ersatzteilkunden). Der Datensatz ist öffentlich und real, deshalb la
 
 ```mermaid
 flowchart LR
-    U["UCI Online Retail II<br/>1,07 Mio. Zeilen"] --> B["Bereinigung<br/>6 Schritte mit Protokoll"]
+    U["UCI Online Retail II<br/>1,07 Mio. Rechnungspositionen"] --> B["Bereinigung<br/>6 Schritte mit Protokoll"]
     B --> E["Explorative Analyse<br/>Saison, Länder, Produkte"]
     B --> R["RFM je Kunde<br/>log + Standardisierung"]
     R --> K["K-Means, k = 4<br/>Elbow + Silhouette"]
@@ -54,17 +69,11 @@ flowchart LR
 
 ### Das Stichtag-Design (gegen Data Leakage)
 
-Die naheliegende Variante „RFM über alle Daten, Churn = 90 Tage nichts gekauft“ würde nahezu perfekt aussehen,
-weil das Label schon in der Recency steckt. Das Modell würde „vorhersagen“, was bereits passiert ist.
-
-Stattdessen wird die Situation im Einsatz nachgestellt:
-- **Merkmale** nur aus Käufen *vor* dem Stichtag. Ein Test manipuliert alle Daten ab dem Stichtag und prüft, dass
-  sich die Merkmale nicht ändern.
-- **Label:** Churn = 1, wenn in den **90 Tagen nach** dem Stichtag kein Kauf kommt.
-- **Population:** nur Kunden mit Kauf in den 12 Monaten vor dem Stichtag. Längst verlorene Kunden würden die
-  Kennzahlen künstlich verbessern.
-- **Out-of-Time-Test:** Training am 10.06.2011, Test am 09.09.2011. Das Label-Fenster des Trainings endet vor dem
-  Test-Stichtag, genau wie im Betrieb.
+Würde man RFM über alle Daten rechnen und Churn als „90 Tage nichts gekauft“ definieren, stünde das Label schon in
+den Merkmalen, und das Modell sähe täuschend gut aus. Deshalb sehen die Merkmale nur Käufe *vor* einem Stichtag,
+und das Label zählt erst die 90 Tage *danach*. Trainiert wird am 10.06.2011, getestet an einem späteren Stichtag
+(09.09.2011), genau wie im Betrieb. Details zu Population, Leakage-Test, Robustheit und Merkmalsauswahl stehen in
+[`docs/METHODIK.md`](docs/METHODIK.md).
 
 ![Stichtage](docs/07-stichtage.png)
 
@@ -80,12 +89,17 @@ Stattdessen wird die Situation im Einsatz nachgestellt:
 
 Kein LLM, kein Server, keine Cloud: Das Projekt ist bewusst klassische Data Science.
 
+**Tracewell** ist mein Startup. Aus dessen Designsystem stammen die Farben aller Diagramme (definiert in
+`src/trace_kunden/konfig.py`, angewendet in `diagramme.py`); mit der Analyse selbst hat der Name nichts zu tun.
+
 ## Daten
 
 [Online Retail II](https://archive.ics.uci.edu/dataset/502/online+retail+ii), UCI Machine Learning Repository
 (Daqing Chen, Lizenz CC BY 4.0). Alle Rechnungspositionen eines britischen Online-Händlers vom 01.12.2009 bis
 09.12.2011. Die Daten werden per Skript geladen und **nicht** ins Repository übernommen (`data/` steht in
 `.gitignore`).
+
+Lizenz: Code [MIT](LICENSE) · Daten: UCI Online Retail II, CC BY 4.0 (nicht im Repo, per Skript geladen)
 
 ## Ergebnisse & Evaluation
 
@@ -147,13 +161,8 @@ Precision, Recall und F1 bei Schwelle 0,5. Zufällige Auswahl träfe 49,5 %.
 
 ![Modellvergleich](docs/08-modellvergleich.png)
 
-**Robustheit:** Training im gleichen Saisonfenster ein Jahr früher (09.09.2010): Logistic Regression 0,768, Random
-Forest 0,747, HistGradientBoosting 0,745.
-
-**Iteration der Merkmale:** Die erste Version hatte 14 Merkmale, darunter drei Verhältnisse (Ø Warenkorb, Ø Abstand
-zwischen Käufen, „überfällig“). Gleiche Güte (0,768), aber in der Logistic Regression unplausible Gewichte: Recency
-wirkte negativ, weil log(Warenkorb) = log(Umsatz) − log(Frequenz) eine exakte Linearkombination ist
-(Multikollinearität). Mit 11 Merkmalen bleibt die Güte (0,766), und die Gewichte lassen sich wieder lesen.
+Robustheit (Training ein Jahr früher) und die Iteration der Merkmale von 14 auf 11 stehen in
+[`docs/METHODIK.md`](docs/METHODIK.md).
 
 | Wichtigste Merkmale (Permutation Importance, LogReg) | Rückgang ROC-AUC | Richtung |
 |---|---:|---|
@@ -195,16 +204,17 @@ Optimum im realistischen Szenario: die **6 % Kunden mit dem höchsten erwarteten
   weitgehend monoton („weniger aktiv → eher weg“). Ich empfehle die **Logistic Regression**: gleich gut, robuster
   beim Vorjahrestest und erklärbar.
 - **Das Modell schlägt die Faustregel deutlich, aber nicht dramatisch:** ROC-AUC 0,71 → 0,77, Trefferquote in den
-  riskantesten 20 % 71 % → 76 %. Ein ehrliches Ergebnis für Transaktionsdaten ohne weitere Signale (Website-Besuche,
+  riskantesten 20 % 71 % → 76 %. Das ist erwartbar für Transaktionsdaten ohne weitere Signale (Website-Besuche,
   Reklamationen, Außendienstkontakte).
 - **Out-of-Time ist strenger als Kreuzvalidierung:** 0,81 in der CV, 0,77 am späteren Stichtag. Ein zufälliger Split
   hätte diese Lücke versteckt. Ursache ist die Saison: Im Training wanderten 64 % ab, im Test 50 %. Deshalb arbeitet
   die Kampagne mit der Rangfolge statt mit einer festen Schwelle.
 - **Der wichtigste Business-Befund:** Die riskantesten Kunden sind meist die kleinsten. Eine Kampagne nach reinem
-  Churn-Risiko ist deshalb die *schlechteste* Strategie, obwohl sie die meisten Abwanderer trifft. Erst die
-  Gewichtung mit dem Kundenwert macht die Kampagne tragfähig. Unter vorsichtigen Annahmen lohnt sich nur eine
-  **kleine, gezielte Aktion** für einige hundert wertvolle, gefährdete Kunden, dafür aber auch mit teureren Kanälen
-  (Anruf statt Gutschein-Mail).
+  Churn-Risiko ist deshalb die *schlechteste* Strategie, obwohl sie die meisten Abwanderer trifft. Die
+  Gewichtung mit dem Kundenwert bringt die Kampagne knapp über die Gewinnschwelle (realistisch +£121 bei 861
+  Kunden, Optimum £979 bei 258 Kunden). Der Kern bleibt: Breite Aktionen lohnen sich nicht. Unter
+  vorsichtigen Annahmen bleibt nur eine **kleine, gezielte Aktion** für einige hundert wertvolle, gefährdete
+  Kunden, dafür aber auch mit teureren Kanälen (Anruf statt Gutschein-Mail).
 - **Timing:** Die Kunden kaufen saisonal. Eine Rückgewinnung wirkt Anfang September vor dem Weihnachtsgeschäft,
   nicht im Juli.
 
@@ -221,7 +231,7 @@ Weitere Diagramme in [`docs/`](docs/), das vollständige Notebook mit allen Ausg
 
 ## Starten
 
-Voraussetzung: [uv](https://docs.astral.sh/uv/). Kein LLM und kein Node nötig.
+Voraussetzung: [uv](https://docs.astral.sh/uv/). Kein LLM und kein Node nötig. Getestet auf macOS (bash).
 
 ```bash
 ./start.sh
@@ -242,7 +252,7 @@ uv run pytest
 
 ## Grenzen & nächste Schritte
 
-**Ehrliche Grenzen**
+**Grenzen**
 - **15 % des Umsatzes fehlen** (Käufe ohne Kunden-ID). Wenn das systematisch bestimmte Kunden sind (z. B.
   Gastbestellungen), sind die Segmente verzerrt.
 - **Churn ist eine Definition, keine Beobachtung.** Händler kaufen saisonal; wer 90 Tage nichts kauft, ist
