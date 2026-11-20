@@ -1,0 +1,231 @@
+{
+  "bereinigung": {
+    "roh_zeilen": 1067371,
+    "zeilen": 770398,
+    "kunden": 5839,
+    "umsatz": 16467060,
+    "umsatzanteil_ohne_id": 0.154,
+    "schritte": {
+      "Exakte Duplikate": 34335,
+      "Fehlende Kunden-ID": 235151,
+      "Stornos ausgegliedert": 18390,
+      "Stornierte Käufe (Ausreißer)": 6332,
+      "Keine Produkte": 2706,
+      "Menge oder Preis ≤ 0": 59
+    }
+  },
+  "segmente": {
+    "k": 4,
+    "silhouette": {
+      "2": 0.439,
+      "3": 0.347,
+      "4": 0.363,
+      "5": 0.339,
+      "6": 0.334,
+      "7": 0.303,
+      "8": 0.307,
+      "9": 0.292,
+      "10": 0.289
+    },
+    "profil": {
+      "Top-Kunden": {
+        "kunden": 1168,
+        "anteil_kunden": 0.2,
+        "umsatz_anteil": 0.734,
+        "recency_median": 16.0,
+        "frequency_median": 13.0,
+        "monetary_median": 4905
+      },
+      "Gefährdete Stammkunden": {
+        "kunden": 1469,
+        "anteil_kunden": 0.252,
+        "umsatz_anteil": 0.166,
+        "recency_median": 178.0,
+        "frequency_median": 4.0,
+        "monetary_median": 1447
+      },
+      "Neue & Gelegenheitskunden": {
+        "kunden": 1231,
+        "anteil_kunden": 0.211,
+        "umsatz_anteil": 0.063,
+        "recency_median": 23.0,
+        "frequency_median": 3.0,
+        "monetary_median": 715
+      },
+      "Verlorene Einmalkäufer": {
+        "kunden": 1971,
+        "anteil_kunden": 0.338,
+        "umsatz_anteil": 0.038,
+        "recency_median": 400.0,
+        "frequency_median": 1.0,
+        "monetary_median": 269
+      }
+    }
+  },
+  "churn": {
+    "stichtage": {
+      "train": "2011-06-10",
+      "test": "2011-09-09",
+      "vorjahr": "2010-09-09"
+    },
+    "population": {
+      "train": 4316,
+      "test": 4305,
+      "vorjahr": 3332
+    },
+    "churn_rate": {
+      "train": 0.642,
+      "test": 0.495,
+      "vorjahr": 0.422
+    },
+    "test": {
+      "Faustregel (Recency)": {
+        "ROC-AUC": 0.706,
+        "PR-AUC": 0.659,
+        "Precision": 0.693,
+        "Recall": 0.493,
+        "F1": 0.576,
+        "Precision Top 20 %": 0.706
+      },
+      "Logistic Regression": {
+        "CV ROC-AUC (Training)": 0.806,
+        "ROC-AUC": 0.766,
+        "PR-AUC": 0.728,
+        "Precision": 0.661,
+        "Recall": 0.791,
+        "F1": 0.72,
+        "Precision Top 20 %": 0.764
+      },
+      "Random Forest": {
+        "CV ROC-AUC (Training)": 0.809,
+        "ROC-AUC": 0.766,
+        "PR-AUC": 0.726,
+        "Precision": 0.658,
+        "Recall": 0.814,
+        "F1": 0.728,
+        "Precision Top 20 %": 0.765
+      },
+      "HistGradientBoosting": {
+        "CV ROC-AUC (Training)": 0.808,
+        "ROC-AUC": 0.765,
+        "PR-AUC": 0.715,
+        "Precision": 0.662,
+        "Recall": 0.814,
+        "F1": 0.73,
+        "Precision Top 20 %": 0.756
+      }
+    },
+    "hyperparameter": {
+      "Logistic Regression": {
+        "logisticregression__C": 1.0
+      },
+      "Random Forest": {
+        "max_depth": 6,
+        "min_samples_leaf": 20
+      },
+      "HistGradientBoosting": {
+        "learning_rate": 0.03,
+        "max_depth": 3,
+        "max_iter": 150
+      }
+    },
+    "konfusion_lr": [
+      [
+        1312,
+        864
+      ],
+      [
+        444,
+        1685
+      ]
+    ],
+    "robustheit_vorjahr_roc_auc": {
+      "Logistic Regression": 0.768,
+      "Random Forest": 0.747,
+      "HistGradientBoosting": 0.745
+    },
+    "permutation_importance_top5": {
+      "kaeufe_90": 0.0461,
+      "umsatz_gesamt": 0.0317,
+      "frequenz": 0.0196,
+      "aktive_monate_12": 0.0167,
+      "kundendauer_tage": 0.0137
+    },
+    "iteration_14_merkmale_roc_auc": 0.768
+  },
+  "kampagne": {
+    "annahmen": {
+      "pessimistisch": {
+        "name": "pessimistisch",
+        "erfolgsquote": 0.05,
+        "kosten_je_kontakt": 8.0,
+        "marge": 0.2,
+        "quartale": 1
+      },
+      "realistisch": {
+        "name": "realistisch",
+        "erfolgsquote": 0.1,
+        "kosten_je_kontakt": 5.0,
+        "marge": 0.25,
+        "quartale": 1
+      },
+      "optimistisch": {
+        "name": "optimistisch",
+        "erfolgsquote": 0.15,
+        "kosten_je_kontakt": 3.0,
+        "marge": 0.3,
+        "quartale": 2
+      }
+    },
+    "ergebnis_20_prozent": {
+      "Zufällig": {
+        "pessimistisch": -6144,
+        "realistisch": -2444,
+        "optimistisch": 4116
+      },
+      "Faustregel (Recency)": {
+        "pessimistisch": -6224,
+        "realistisch": -2645,
+        "optimistisch": 3392
+      },
+      "Modell (Risiko)": {
+        "pessimistisch": -6494,
+        "realistisch": -3319,
+        "optimistisch": 966
+      },
+      "Modell × Kundenwert": {
+        "pessimistisch": -5118,
+        "realistisch": 121,
+        "optimistisch": 13349
+      }
+    },
+    "trefferquote_20_prozent": {
+      "Zufällig": 0.508,
+      "Faustregel (Recency)": 0.707,
+      "Modell (Risiko)": 0.764,
+      "Modell × Kundenwert": 0.409
+    },
+    "erreichter_quartalswert_20_prozent": {
+      "Zufällig": 74433,
+      "Faustregel (Recency)": 66393,
+      "Modell (Risiko)": 39438,
+      "Modell × Kundenwert": 177025
+    },
+    "break_even_quote_20_prozent": {
+      "Zufällig": 0.231,
+      "Faustregel (Recency)": 0.259,
+      "Modell (Risiko)": 0.437,
+      "Modell × Kundenwert": 0.097
+    },
+    "optimum_realistisch": {
+      "anteil": 0.06,
+      "angeschrieben": 258,
+      "davon_abwanderer": 101,
+      "trefferquote": 0.39,
+      "nutzen": 2268.73,
+      "kosten": 1290.0,
+      "ergebnis": 978.73,
+      "roi": 0.76
+    }
+  }
+}
