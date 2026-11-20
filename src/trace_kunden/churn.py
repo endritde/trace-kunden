@@ -10,14 +10,12 @@ import pandas as pd
 
 from trace_kunden.konfig import AKTIV_FENSTER_TAGE, CHURN_FENSTER_TAGE
 
+# Merkmale für die Modelle.
 FEATURES = [
     "recency_tage",
     "frequenz",
     "umsatz_gesamt",
-    "warenkorb_mittel",
     "kundendauer_tage",
-    "mittlerer_abstand_tage",
-    "ueberfaellig",
     "kaeufe_90",
     "kaeufe_vorher_90",
     "umsatz_90",
@@ -26,6 +24,10 @@ FEATURES = [
     "storno_quote",
     "ist_uk",
 ]
+# Abgeleitete Verhältnisse aus der ersten Iteration. Sie sind exakte Kombinationen anderer Merkmale
+# (z. B. Warenkorb = Umsatz / Frequenz, nach Log-Transformation eine reine Differenz). In der Logistic
+# Regression erzeugen sie Kollinearität und unplausible Vorzeichen, ohne die Güte zu verbessern.
+ABGELEITET = ["warenkorb_mittel", "mittlerer_abstand_tage", "ueberfaellig"]
 
 
 def population(verkaeufe: pd.DataFrame, stichtag: pd.Timestamp,
@@ -78,7 +80,7 @@ def kundenfeatures(verkaeufe: pd.DataFrame, stornos: pd.DataFrame, stichtag: pd.
 
     zaehler = ["kaeufe_90", "kaeufe_vorher_90", "umsatz_90", "aktive_monate_12"]
     f[zaehler] = f[zaehler].fillna(0)
-    return f[FEATURES].astype(float)
+    return f[FEATURES + ABGELEITET].astype(float)
 
 
 def churn_label(verkaeufe: pd.DataFrame, kunden: pd.Index, stichtag: pd.Timestamp,

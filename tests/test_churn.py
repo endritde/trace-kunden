@@ -2,6 +2,7 @@ import pandas as pd
 import pytest
 
 from trace_kunden.churn import (
+    ABGELEITET,
     FEATURES,
     churn_datensatz,
     churn_label,
@@ -36,7 +37,7 @@ def test_features_nutzen_keine_daten_ab_dem_stichtag(verkaeufe, stornos):
 def test_features_werte(verkaeufe, stornos):
     f = kundenfeatures(verkaeufe, stornos, STICHTAG)
     k1 = f.loc[1]
-    assert list(f.columns) == FEATURES
+    assert list(f.columns) == FEATURES + ABGELEITET
     assert k1["recency_tage"] == 12          # 20.05. → 01.06.
     assert k1["frequenz"] == 3
     assert k1["umsatz_gesamt"] == 220
