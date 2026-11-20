@@ -276,7 +276,11 @@ uv run pytest
 
 ## Was ich gelernt habe
 
-> _Platzhalter, den Abschnitt schreibe ich selbst._
+- **Einfach schlägt kompliziert, wenn es gleich gut ist.** Ich hatte erwartet, dass Random Forest oder Gradient Boosting klar vorne liegen. Am Ende war die Logistic Regression genauso gut und lässt sich jedem Marketing-Team erklären. Also empfehle ich die.
+- **Ein Modell darf nicht in die Zukunft schauen.** Am schwierigsten zu verstehen war für mich das Stichtag-Design: Merkmale nur aus der Zeit vor dem Stichtag, sonst sieht das Ergebnis toll aus und funktioniert in der Praxis nicht.
+- **Die Business-Frage ist wichtiger als die Modellgüte.** Erst die Kampagnenrechnung hat gezeigt, dass eine breite Rabattaktion Geld verbrennt und nur eine kleine, gezielte Aktion sinnvoll ist. Das ist der Teil, bei dem mir mein Marketing-Studium am meisten geholfen hat.
+
+**Zur Arbeit mit Claude Code:** Programmiert habe ich mit Claude Code als Pair-Programmer. Das ging schnell, aber die Entscheidungen musste ich treffen: Was ist die richtige Frage, was ist eine faire Baseline, welche Zahl ist ehrlich? Eine kritische Prüfung am Ende hat mehrere Aussagen gefunden, die zu optimistisch formuliert waren. Mein wichtigstes Learning: KI beschleunigt die Arbeit, aber prüfen und verantworten muss ich selbst.
 
 ---
 
